@@ -75,7 +75,7 @@
         const canvasElement = document.getElementById('qr-canvas');
         const canvas = canvasElement.getContext('2d');
         const qrResult = document.getElementById('qr-result');
-
+        const STOP_DELAY = 2000;
         let scanning = false;
 
         function startScanning() {
@@ -113,7 +113,12 @@
                     drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
                     drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
                     qrResult.textContent = "Detected QR code: " + code.data;
-                    stopScanning();
+
+                    // Add a delay before stopping the scanner
+                    setTimeout(() => {
+                        stopScanning();
+                    }, STOP_DELAY);
+
                     return;
                 } else {
                     qrResult.textContent = "No QR code detected.";
@@ -122,6 +127,7 @@
             if (scanning) {
                 requestAnimationFrame(tick);
             }
+
         }
 
         function drawLine(begin, end, color) {
@@ -162,7 +168,6 @@
         const CENTER_LAT = 11.55613804408328;
         const CENTER_LON = 104.9218005731158;
         const MAX_DISTANCE = 80;
-
 
         async function getIPv4FromApi() {
             try {

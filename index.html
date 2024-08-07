@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,6 +41,11 @@
             margin: 20px;
             text-align: center;
         }
+
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
     </style>
 </head>
 
@@ -48,12 +53,9 @@
     <h1>QR Code Scanner</h1>
     <div id="result">Scan result will appear here</div>
     <br>
-    <div id="reader" style="width: 300px"></div>
-    <p id="output">QR Code Value will appear here!!</p>
-
-    <!-- <br>
-    <video id="preview"></video>
-    <p id="output">QR Code Value will appear here</p> -->
+    <div id="reader"></div>
+    <div id="result"></div>
+    <script src="qr_code.js"></script>
 
     <button onclick="scanQRCode()">Scan QR Code</button>
     <script>

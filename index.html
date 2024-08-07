@@ -63,14 +63,59 @@
     <h1>QR Code Scanner</h1>
     <div id="result">Scan result will appear here</div>
     <div id="qr-result">qr relust</div>
+    <h1>Bluetooth Connection Check</h1>
+    <button id="checkBluetoothBtn">Check Bluetooth</button>
+    <div id="status"></div>
+    <div id="deviceInfo"></div>
+    <!-- <button onclick="checkWifi()">Network</button> -->
     <br>
     <div id="video-container">
         <video id="qr-video" width="100%" height="90%"></video>
     </div>
     <canvas id="qr-canvas">qr canvas</canvas>
 
+    <script>
+        const checkBluetoothBtn = document.getElementById('checkBluetoothBtn');
+        const statusDiv = document.getElementById('status');
+        const deviceInfoDiv = document.getElementById('deviceInfo');
 
-    <button onclick="scanQRCode()">Scan QR Code</button>
+        function updateStatus(message) {
+            statusDiv.innerHTML += `<p>${message}</p>`;
+        }
+
+        function updateDeviceInfo(info) {
+            deviceInfoDiv.innerHTML += `<p>${info}</p>`;
+        }
+
+        checkBluetoothBtn.addEventListener('click', async () => {
+            statusDiv.innerHTML = '';
+            deviceInfoDiv.innerHTML = '';
+
+            if ('bluetooth' in navigator) {
+                updateStatus('Bluetooth is available on this device.');
+
+                try {
+                    const device = await navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true
+                    });
+
+                    updateDeviceInfo(`Device selected: ${device.name || 'Unnamed device'}`);
+
+                    updateStatus('Attempting to connect...');
+                    const server = await device.gatt.connect();
+                    updateStatus('Connected to GATT server.');
+
+                    // You can add more interactions with the device here
+
+                } catch (error) {
+                    updateStatus(`Error: ${error}`);
+                }
+            } else {
+                updateStatus('Bluetooth is not available on this device or browser.');
+            }
+        });
+    </script>
+
     <script>
         const video = document.getElementById('qr-video');
         const canvasElement = document.getElementById('qr-canvas');

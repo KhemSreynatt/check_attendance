@@ -54,46 +54,37 @@
     <div id="result">Scan result will appear here</div>
     <br>
     <div id="reader"></div>
-    <div id="result"></div>
-    <script src="qr_code.js"></script>
-
     <button onclick="scanQRCode()">Scan QR Code</button>
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('output').textContent = "Scanned QR code: " + decodedText;
-            html5QrcodeScanner.clear();
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Callback function when a QR code is successfully scanned
+            function onScanSuccess(decodedText, decodedResult) {
+                // Handle the decoded text (QR code content)
+                document.getElementById('result').innerText = `Scanned QR Code: ${decodedText}`;
+                console.log(`Scanned QR Code: ${decodedText}`, decodedResult);
 
-        function onScanFailure(error) {
-            console.warn(`QR code scanning failed: ${error}`);
-        }
-
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            /* verbose= */ false);
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    </script>
-    <!-- 
-    <script>
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-
-        scanner.addListener('scan', function (content) {
-            document.getElementById('output').textContent = "Scanned QR code: " + content;
-        });
-
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                console.error('No cameras found.');
-                alert('No cameras found on this device.');
+                // Optionally, stop scanning after a successful scan
+                html5QrcodeScanner.clear();
             }
-        }).catch(function (e) {
-            console.error(e);
-            alert('Error accessing the camera: ' + e);
+
+            // Callback function when a QR code scan fails
+            function onScanFailure(error) {
+                // Handle scan failure, usually better to ignore and keep scanning.
+                console.warn(`QR Code scan error: ${error}`);
+            }
+
+            // Create an instance of Html5QrcodeScanner
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader",
+                { fps: 10, qrbox: 250 },
+        /* verbose= */ false
+            );
+
+            // Start scanning
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
         });
-    </script> -->
+    </script>
+
     <script>
         const listWifiInfo = [
             {

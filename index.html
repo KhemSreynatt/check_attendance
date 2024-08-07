@@ -62,12 +62,14 @@
 <body>
     <h1>QR Code Scanner</h1>
     <div id="result">Scan result will appear here</div>
+
+    <div id="qr-result">qr relust</div>
     <br>
     <div id="video-container">
-        <video id="qr-video" width="90%" height="auto"></video>
+        <video id="qr-video" width="100%" height="auto"></video>
     </div>
     <canvas id="qr-canvas">qr canvas</canvas>
-    <div id="qr-result">qr relust</div>
+
 
     <button onclick="scanQRCode()">Scan QR Code</button>
     <script>
@@ -75,7 +77,7 @@
         const canvasElement = document.getElementById('qr-canvas');
         const canvas = canvasElement.getContext('2d');
         const qrResult = document.getElementById('qr-result');
-        const STOP_DELAY = 2000;
+        const STOP_DELAY = 1000;
         let scanning = false;
 
         function startScanning() {
@@ -228,7 +230,6 @@
                 const { ssid, dssid, password, ipv4, ipv6, gps, branch, branch_id } = wifiInfo;
                 const [qrLat, qrLng] = gps.split(',').map(Number);
                 const [scannedLat, scannedLng] = scannedData.gps.split(',').map(Number);
-
                 const isSSIDMatch = ssid === scannedData.ssid;
                 const isDSSIDMatch = dssid === scannedData.dssid;
                 const isPasswordMatch = password === scannedData.password;

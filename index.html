@@ -97,8 +97,8 @@
             navigator.bluetooth.requestDevice({
                 filters: [
                     { services: ['battery_service'] } // Example service UUID
-                ],
-                acceptAllDevices: true,
+                ]
+                // acceptAllDevices: true,
             })
                 .then(device => {
                     output.textContent = `Device found: ${device.name}`;

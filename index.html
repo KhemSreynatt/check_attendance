@@ -85,7 +85,7 @@
         const scanButton = document.getElementById('scanButton');
         const output = document.getElementById('output');
         const bluetoothId = document.getElementById('bluetoothId');
-        const gatt = document.getElementById('gatt');
+        const uuid = document.getElementById('uuid');
 
         scanButton.addEventListener('click', () => {
             if ('bluetooth' in navigator) {
@@ -112,9 +112,9 @@
                 const device = await navigator.bluetooth.requestDevice({
                     acceptAllDevices: true
                 });
-                output.textContent = `Device found: ${device.name}`;
+                output.textContent = `Device name: ${device.name}`;
                 bluetoothId.textContent = `Device Id : ${device.id}`;
-                gatt.textContent = `Device connected: ${device.gatt.connected}`;
+
                 // console.log('Device name:', device.name);
                 // console.log('Device ID:', device.id);
                 // console.log('Device connected:', device.gatt.connected);
@@ -136,6 +136,8 @@
                     const characteristics = await service.getCharacteristics();
                     console.log('Characteristics for service', service.uuid, ':',
                         characteristics.map(c => c.uuid));
+                    uuid.textContent = `Device UUID: ${service.uuid}`;
+
                 }
             } catch (error) {
                 console.error('Connection error:', error);
@@ -147,7 +149,7 @@
 
             const device = await getBluetoothInfo();
             if (device) {
-                output.innerHTML += `<br>Device: ${device.name}`;
+                // output.innerHTML += `<br>Device: ${device.name}`;
                 await connectAndGetInfo(device);
             }
         }

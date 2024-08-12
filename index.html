@@ -64,16 +64,64 @@
     <div id="result">Scan result will appear here</div>
     <div id="qr-result">qr relust</div>
     <h1>Bluetooth Connection Check</h1>
-    <button style="position:absolute" id="checkBluetoothBtn">Check Bluetooth</button>
+    <!-- <button style="position:absolute" id="checkBluetoothBtn">Check Bluetooth</button> -->
     <div id="status"></div>
     <div id="deviceInfo"></div>
-    <button onclick="scanQRCode()">Scan QR Code</button>
+    <button id="scanButton">Scan for Beacons</button>
+    <div id="output"></div>
+    <!-- <button onclick="scanQRCode()">Scan QR Code</button> -->
     <br>
     <div id="video-container">
         <video id="qr-video" width="100%" height="90%"></video>
     </div>
     <canvas id="qr-canvas">qr canvas</canvas>
 
+    <script>
+        const scanButton = document.getElementById('scanButton');
+        const output = document.getElementById('output');
+
+        scanButton.addEventListener('click', () => {
+            if ('bluetooth' in navigator) {
+                scanForBeacons();
+            } else {
+                output.textContent = 'Web Bluetooth API is not supported in this browser';
+            }
+        });
+
+        function scanForBeacons() {
+            navigator.bluetooth.requestDevice({
+                filters: [
+                    { services: ['battery_service'] } // Example service UUID
+                ]
+            })
+                .then(device => {
+                    output.textContent = `Device found: ${device.name}`;
+                    return device.gatt.connect();
+                })
+                .then(server => {
+                    return server.getPrimaryService('battery_service');
+                })
+                .then(service => {
+                    return service.getCharacteristic('battery_level');
+                })
+                .then(characteristic => {
+                    return characteristic.startNotifications();
+                })
+                .then(characteristic => {
+                    characteristic.addEventListener('characteristicvaluechanged', handleValueChange);
+                    output.textContent += '\nListening for beacon data...';
+                })
+                .catch(error => {
+                    output.textContent = `Error Bluetooth :: ${error}`;
+                });
+        }
+
+        function handleValueChange(event) {
+            const value = event.target.value;
+            output.textContent += `\nBeacon data: ${value}`;
+        }
+    </script>
+    <!-- check bluetooth device -->
     <script>
         const checkBluetoothBtn = document.getElementById('checkBluetoothBtn');
         const statusDiv = document.getElementById('status');

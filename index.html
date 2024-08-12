@@ -67,11 +67,12 @@
     <!-- <button style="position:absolute" id="checkBluetoothBtn">Check Bluetooth</button> -->
     <div id="status"></div>
     <div id="deviceInfo"></div>
-    <button id="scanButton">Scan for Beacons</button>
+    <!-- <button id="scanButton">Scan for Beacons</button> -->
     <div id="output"></div>
     <div id="bluetoothId">bluetooth Id</div>
     <div id="gatt">gatt</div>
-
+    <button onclick="checkBluetoothInfo()">Check Bluetooth Info</button>
+    <div id="output"></div>
     <!-- <button onclick="scanQRCode()">Scan QR Code</button> -->
     <br>
     <div id="video-container">
@@ -80,6 +81,7 @@
     <canvas id="qr-canvas">qr canvas</canvas>
 
     <script>
+
         const scanButton = document.getElementById('scanButton');
         const output = document.getElementById('output');
         const bluetoothId = document.getElementById('bluetoothId');
@@ -92,6 +94,65 @@
                 output.textContent = 'Web Bluetooth API is not supported in this browser';
             }
         });
+
+        // 1234
+        function checkBluetoothAvailability() {
+            if ('bluetooth' in navigator) {
+                console.log('Bluetooth is available');
+                return true;
+            } else {
+                console.log('Bluetooth is not available in this browser');
+                return false;
+            }
+        }
+        async function getBluetoothInfo() {
+            if (!checkBluetoothAvailability()) return;
+
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true
+                });
+                output.textContent = `Device found: ${device.name}`;
+                bluetoothId.textContent = `Device Id : ${device.id}`;
+                gatt.textContent = `Device connected: ${device.gatt.connected}`;
+                // console.log('Device name:', device.name);
+                // console.log('Device ID:', device.id);
+                // console.log('Device connected:', device.gatt.connected);
+
+                return device;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        async function connectAndGetInfo(device) {
+            try {
+                const server = await device.gatt.connect();
+                console.log('Connected to GATT server');
+
+                const services = await server.getPrimaryServices();
+                console.log('Services:', services.map(s => s.uuid));
+
+                for (const service of services) {
+                    const characteristics = await service.getCharacteristics();
+                    console.log('Characteristics for service', service.uuid, ':',
+                        characteristics.map(c => c.uuid));
+                }
+            } catch (error) {
+                console.error('Connection error:', error);
+            }
+        }
+        async function checkBluetoothInfo() {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Checking Bluetooth...';
+
+            const device = await getBluetoothInfo();
+            if (device) {
+                output.innerHTML += `<br>Device: ${device.name}`;
+                await connectAndGetInfo(device);
+            }
+        }
+
+        // 1234
 
         function scanForBeacons() {
             navigator.bluetooth.requestDevice({

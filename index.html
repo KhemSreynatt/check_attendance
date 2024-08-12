@@ -69,6 +69,9 @@
     <div id="deviceInfo"></div>
     <button id="scanButton">Scan for Beacons</button>
     <div id="output"></div>
+    <div id="bluetoothId">bluetooth Id</div>
+    <div id="gatt">gatt</div>
+
     <!-- <button onclick="scanQRCode()">Scan QR Code</button> -->
     <br>
     <div id="video-container">
@@ -79,6 +82,8 @@
     <script>
         const scanButton = document.getElementById('scanButton');
         const output = document.getElementById('output');
+        const bluetoothId = document.getElementById('bluetoothId');
+        const gatt = document.getElementById('gatt');
 
         scanButton.addEventListener('click', () => {
             if ('bluetooth' in navigator) {
@@ -92,10 +97,13 @@
             navigator.bluetooth.requestDevice({
                 filters: [
                     { services: ['battery_service'] } // Example service UUID
-                ]
+                ],
+                acceptAllDevices: true,
             })
                 .then(device => {
                     output.textContent = `Device found: ${device.name}`;
+                    bluetoothId.textContent = `Device Id : ${device.id}`;
+                    gatt.textContent = `Device connected: ${device.gatt.connected}`;
                     return device.gatt.connect();
                 })
                 .then(server => {
